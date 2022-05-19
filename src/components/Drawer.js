@@ -1,4 +1,9 @@
-function Drawer({onClose, items = []}) {
+import AppContext from "../context";
+import React from "react";
+
+function Drawer({onClose, onRemove, items = []}) {
+  const {cartItems} = React.useContext(AppContext);
+  const totalPrice = cartItems.reduce((sum, obj)=>obj.price+sum,0);
   return (
     <div  className="overlay">
       <div className="drawer">
@@ -13,7 +18,7 @@ function Drawer({onClose, items = []}) {
 
         <div className="items">
           {items.map((obj)=>(
-           <div className="cartItem d-flex align-center mb-20">
+           <div key={obj.id} className="cartItem d-flex align-center mb-20">
            <img
              className="mr-20"
              width={70}
@@ -25,7 +30,8 @@ function Drawer({onClose, items = []}) {
              <p className="mb-5">{obj.title}</p>
              <b>{obj.price} руб.</b>
            </div>
-           <img className="removeBtn" src="/img/btn-remove.svg" alt="Remove" />
+           
+           <img onClick = {()=>onRemove(obj.id)} className="removeBtn" src="/img/btn-remove.svg" alt="Remove" />
          </div>
           
           ))}
@@ -38,7 +44,7 @@ function Drawer({onClose, items = []}) {
             <li>
               <span>Итого:</span>
               <div></div>
-              <b>98 руб.</b>
+              <b>{totalPrice} руб.</b>
             </li>
           </ul>
           <button className="greenButton">Оформить заказ</button>
