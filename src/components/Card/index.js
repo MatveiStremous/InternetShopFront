@@ -1,6 +1,7 @@
 import React from "react";
 import styles from "./Card.module.scss";
 import AppContext from "../../context";
+import { Link } from 'react-router-dom';
 
 function Card({ id, title, imageUrl, price, onPlus}) {
  
@@ -12,6 +13,7 @@ function Card({ id, title, imageUrl, price, onPlus}) {
   };
 
   return (
+    <Link to={`/products/${id}`} >
     <div className={styles.card}>
       <img width={133} height={112} src={imageUrl} alt="Product" />
       <h5>{title}</h5>
@@ -28,6 +30,7 @@ function Card({ id, title, imageUrl, price, onPlus}) {
         />
       </div>
     </div>
+    </Link>
   );
 }
 
