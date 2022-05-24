@@ -10,7 +10,7 @@ function Drawer({onClose, onRemove, items = []}) {
         <h2 className="d-flex justify-between mb-30">
           Корзина{" "}
           <img onClick={onClose}
-            className="removeBtn  cu-p"
+            className="removeBtn cu-p"
             src="/img/btn-remove.svg"
             alt="Close"
           />{" "}

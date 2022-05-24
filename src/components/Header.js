@@ -22,9 +22,11 @@ function Header(props){
           <img width={27} height={27} src="/img/cart.png" alt="Cart"/>
           <span>{totalPrice} руб.</span>  
           </li>
-          <li>
+          <Link to="/login">
+          <li className='cu-p'>
           <img width={27} height={27} src="/img/user.png" alt="User"/>
           </li>
+          </Link>
         </ul>
       </header>
     )
