@@ -4,11 +4,29 @@ import axios from "axios";
 import AppContext from "../context";
 
 
-function ProductInfo({onDelete, onAddItemToCart}) {
+function ProductInfo({onDelete, onAddItemToCart, productId, price, imageUrl}) {
     const params = useParams();
-    const {user} = React.useContext(AppContext);
-    const isDeletePermit = user.role==="ADMIN_ROLE" || user.role ==="MODERATOR_ROLE";
+    const {user, isItemAdded} = React.useContext(AppContext);
+    const isDeletePermited = user.role === "ADMIN_ROLE" || user.role === "MODERATOR_ROLE";
 
+    React.useEffect(() => {
+      async function fetchData() {
+        try {
+         axios.get( `http://localhost:8088/getProductInfo/${params.id}`)
+         .then((res)=>{
+          setProduct(res.data)
+         },
+         ()=>{
+           alert("Ошибка при запросе информации о товаре");
+         })
+        } catch (error) {
+          alert("Ошибка при запросе данных :(");
+        }
+      }
+  
+      fetchData();
+    }, []);
+    
     const [product, setProduct] = React.useState(()=>{
       return{
         id: 0,
@@ -23,25 +41,10 @@ function ProductInfo({onDelete, onAddItemToCart}) {
       }
     });
 
-    React.useEffect(() => {
-      async function fetchData() {
-        try {
-         axios.get( `http://localhost:8088/getProductInfo/${params.id}`)
-         .then((res)=>{
-          setProduct(res.data)
-         },
-         ()=>{
-           alert("Ошибка при запросе информации о товаре");
-         })
-        
-        } catch (error) {
-          alert("Ошибка при запросе данных :(");
-        }
-      }
-  
-      fetchData();
-    }, []);
-    
+    const onClickPlus = () => { 
+      onAddItemToCart({productId: product.id, price: product.price, imageUrl: product.imageUrl, title: product.title});
+    };
+
     return (
       <div className="content p-40">
          <h2>{product.title}</h2>
@@ -50,7 +53,14 @@ function ProductInfo({onDelete, onAddItemToCart}) {
         <h4>Цена: {product.price} руб.</h4>
         <h4>Размеры: {product.size}</h4>
         <h4>Материалы: {product.materials}</h4>
-        {isDeletePermit && <img onClick = {()=>onDelete(product.id)} className="removeBtn" src="/img/btn-remove.svg" alt="Remove" />}
+        <img
+          //className={styles.plus}
+          onClick={onClickPlus}
+          src={isItemAdded(params.id) ? "/img/btn-checked.svg" : "/img/btn-plus.svg"}
+          //src="/img/btn-plus.svg"
+          alt="Add"
+        />
+        {isDeletePermited && <img onClick = {()=>onDelete(product.id)} className="removeBtn" src="/img/btn-remove.svg" alt="Remove" />}
       </div>
     );
   }

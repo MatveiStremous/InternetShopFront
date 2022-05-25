@@ -33,15 +33,20 @@ function App() {
     async function fetchData() {
       try {
          const cartResponse = await axios.get(
-          "https://6278f4add00bded55ae1b719.mockapi.io/cart"
+          `http://localhost:8088/getCartItems/${16}`
          );
 
         const itemsResponse = await axios.get(
           "http://localhost:8088/getProducts"
         );
 
+        // const help = cartResponse.data
+        //   .map((item) => (
+        //     {productId: item.productId, price: item.price, imageUrl: item.imageUrl, title: item.title}
+        //   ))
+
         setCartItems(cartResponse.data);
-   
+
         setItems(itemsResponse.data);
       } catch (error) {
         alert("Ошибка при запросе данных :(");
@@ -51,87 +56,68 @@ function App() {
     fetchData();
   }, []);
 
-  const onAddToCart = async (obj) => {
-    try {
-      const findItem = cartItems.find(
-        (item) => Number(item.parentId) === Number(obj.id)
-      );
+  // const onAddToCart = async (obj) => {
+  //   try {
+  //     const findItem = cartItems.find(
+  //       (item) => Number(item.parentId) === Number(obj.id)
+  //     );
 
-      if (findItem) {
-        setCartItems((prev) =>
-          prev.filter((item) => Number(item.parentId) !== Number(obj.id))
-        );
-        await axios.delete(
-          `https://6278f4add00bded55ae1b719.mockapi.io/cart/${findItem.id}`
-        );
-      } else {
-        setCartItems((prev) => [...prev, obj]);
-        const { data } = await axios.post(
-          "https://6278f4add00bded55ae1b719.mockapi.io/cart",
-          obj
-        );
-        setCartItems((prev) =>
-          prev.map((item) => {
-            if (item.parentId === data.parentId) {
-              return {
-                ...item,
-                id: data.id,
-              };
-            }
-            return item;
-          })
-        );
-      }
-    } catch (error) {
-      alert("Не удалось добавить товар в корзину");
-    }
-  };
+  //     if (findItem) {
+  //       setCartItems((prev) =>
+  //         prev.filter((item) => Number(item.parentId) !== Number(obj.id))
+  //       );
+  //       await axios.delete(
+  //         `https://6278f4add00bded55ae1b719.mockapi.io/cart/${findItem.id}`
+  //       );
+  //     } else {
+  //       setCartItems((prev) => [...prev, obj]);
+  //       const { data } = await axios.post(
+  //         "https://6278f4add00bded55ae1b719.mockapi.io/cart",
+  //         obj
+  //       );
+  //       setCartItems((prev) =>
+  //         prev.map((item) => {
+  //           if (item.parentId === data.parentId) {
+  //             return {
+  //               ...item,
+  //               id: data.id,
+  //             };
+  //           }
+  //           return item;
+  //         })
+  //       );
+  //     }
+  //   } catch (error) {
+  //     alert("Не удалось добавить товар в корзину");
+  //   }
+  // };
 
   const onAddItemToCart = async (obj) => {
     try {
       const findItem = cartItems.find(
-        (item) => Number(item.parentId) === Number(obj.id)
+        (item) => Number(item.productId) === Number(obj.productId)
       );
-
+      
       if (findItem) {
         setCartItems((prev) =>
-          prev.filter((item) => Number(item.parentId) !== Number(obj.id))
+          prev.filter((item) => Number(item.productId) !== Number(obj.productId))
         );
-        await axios.delete(
-          `https://6278f4add00bded55ae1b719.mockapi.io/cart/${findItem.id}`
-        );
-      } else {
+        await axios.post("http://localhost:8088/deleteCartItem", {userId: 16, productId: obj.productId, quantity: 1});
+      } 
+       else {
         setCartItems((prev) => [...prev, obj]);
-        const { data } = await axios.post(
-          "https://6278f4add00bded55ae1b719.mockapi.io/cart",
-          obj
-        );
-        setCartItems((prev) =>
-          prev.map((item) => {
-            if (item.parentId === data.parentId) {
-              return {
-                ...item,
-                id: data.id,
-              };
-            }
-            return item;
-          })
-        );
-      }
+        await axios.post( "http://localhost:8088/addCartItem", {userId: 16, productId: obj.productId, quantity: 1});     
+     }
     } catch (error) {
-      alert("Не удалось добавить товар в корзину");
-    }
+     alert("Не удалось добавить товар в корзину");
+   }
   };
-
-
-
 
   const onRemoveFromCart = async (id) => {
     try {
-      axios.delete(`https://6278f4add00bded55ae1b719.mockapi.io/cart/${id}`);
+      await axios.post("http://localhost:8088/deleteCartItem", {userId: 16, productId: id, quantity: 1});
       setCartItems((prev) =>
-        prev.filter((item) => Number(item.id) !== Number(id))
-      );
+        prev.filter((item) => Number(item.productId) !== Number(id)));
     } catch (error) {
       alert("Не удалось удалить товар из корзины");
     }
@@ -139,16 +125,9 @@ function App() {
 
   const onDeleteProduct = async (id) => {
     try {
-      setItems((prev)=>
-      prev.filter((item) => Number(item.id) !== Number(id))
-      
-      //axios.delete(`https://6278f4add00bded55ae1b719.mockapi.io/cart/${id}`);
-      );
+      setItems((prev)=> prev.filter((item) => Number(item.id) !== Number(id)));
       await axios.post(`http://localhost:8088/deleteProduct/${id}`);
       Navigate("/");
-      // setCartItems((prev) =>
-      //   prev.filter((item) => Number(item.id) !== Number(id))
-      // );
     } catch (error) {
       alert("Не удалось удалить товар");
     }
@@ -159,11 +138,12 @@ function App() {
   };
 
   const isItemAdded = (id) => {
-    return cartItems.some((obj) => Number(obj.parentId) === Number(id));
+    console.log(id);
+    return cartItems.some((obj) => Number(obj.productId) === Number(id));
   };
 
   return (
-    <AppContext.Provider value={{ items, cartItems, isItemAdded, user, setUser}}>
+    <AppContext.Provider value={{ items, setCartItems, cartItems, isItemAdded, user, setUser}}>
       <div className="wrapper clear">
         {cartOpened && (
           <Drawer
@@ -184,7 +164,7 @@ function App() {
                 searchValue={searchValue}
                 setSearchValue={setSearchValue}
                 onChangeSearchInput={onChangeSearchInput}
-                onAddToCart={onAddToCart}
+                //onAddToCart={onAddToCart}
               />
             }
           ></Route>
@@ -216,6 +196,7 @@ function App() {
             element={
               <ProductInfo
                 onDelete = {onDeleteProduct}
+                cartItems={cartItems}
                 onAddItemToCart = {onAddItemToCart}
               />
             }

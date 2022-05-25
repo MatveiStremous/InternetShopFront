@@ -18,7 +18,7 @@ function Drawer({onClose, onRemove, items = []}) {
 
         <div className="items">
           {items.map((obj)=>(
-           <div key={obj.id} className="cartItem d-flex align-center mb-20">
+           <div key={obj.productId} className="cartItem d-flex align-center mb-20">
            <img
              className="mr-20"
              width={70}
@@ -31,7 +31,9 @@ function Drawer({onClose, onRemove, items = []}) {
              <b>{obj.price} руб.</b>
            </div>
            
-           <img onClick = {()=>onRemove(obj.id)} className="removeBtn" src="/img/btn-remove.svg" alt="Remove" />
+           <img onClick = {()=> {onRemove(obj.productId)
+            console.log(obj)
+          }} className="removeBtn" src="/img/btn-remove.svg" alt="Remove" />
          </div>
           
           ))}
