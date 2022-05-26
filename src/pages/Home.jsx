@@ -6,7 +6,7 @@ function Home({
   setSearchValue,
   searchValue,
   onChangeSearchInput,
-  onAddToCart,
+  onAddToCart
 }) {
 
   return (
@@ -40,9 +40,9 @@ function Home({
           .filter((item) =>
             item.title.toLowerCase().includes(searchValue.toLowerCase())
           )
-          .map((item, index) => (
+          .map((item) => (
             <Card
-              key={index} //поменять index на id из item...
+              key={item.productId} 
               onPlus={(obj) => onAddToCart(obj)}
               {...item}
             />

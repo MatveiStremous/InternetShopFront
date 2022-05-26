@@ -1,12 +1,14 @@
 import { Link } from 'react-router-dom';
 import React from 'react';
 import AppContext from '../context';
+import NavBlock from './NavBlock';
 
 function Header(props){
   const {cartItems} = React.useContext(AppContext);
   const totalPrice = cartItems.reduce((sum, obj)=>obj.price+sum,0);
 
   return(
+    <>
         <header className="d-flex justify-between align-center p-40">
         <Link to="/">
         <div className="d-flex align-center cu-p">
@@ -22,13 +24,18 @@ function Header(props){
           <img width={27} height={27} src="/img/cart.png" alt="Cart"/>
           <span>{totalPrice} руб.</span>  
           </li>
+          <Link to={"/cart"} ><li>Cart</li></Link>
           <Link to="/login">
           <li className='cu-p'>
           <img width={27} height={27} src="/img/user.png" alt="User"/>
           </li>
           </Link>
+          
         </ul>
+        
       </header>
+      <NavBlock />
+      </>
     )
 }
 

@@ -1,6 +1,6 @@
 import React from "react";
 import axios from "axios";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate} from 'react-router-dom';
 import AppContext from "../context";
 
 function Login() {
@@ -8,18 +8,21 @@ function Login() {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [message, setMessage] = React.useState("");
+  const Navigate = useNavigate();
 
-  const onRegistration = async (obj) => {
+  const onLogIn = async (obj) => {
     try {
         axios.post("http://localhost:8088/login", obj)
         .then((res) => {
+            setMessage("Invalid login or password")
             setUser(res.data);
-            localStorage.setItem('user', user);
-            setMessage("");
+            localStorage.setItem('user',JSON.stringify(user));
+            setMessage("Вы успешно вошли");
+            Navigate("/");
         },
         ()=>{
             setMessage("Invalid login or password")
-        }
+         }
         )
         
     } catch (error) {
@@ -30,7 +33,7 @@ function Login() {
   return (
 
     <div className="content p-40">
-        
+        <h1>{user.id} {user.email} {user.role}</h1>
         <h1> Войдите в аккаунт</h1>
         <div>
 
@@ -52,8 +55,8 @@ function Login() {
              />           
         </div>
             <p></p>
-            <h1>{message && `${message}`}</h1>
-            <div className="cu-p" onClick={() => onRegistration({email, password})}> <h2>Войти</h2> </div>
+            <h1>{message && message}</h1>
+            <div className="cu-p" onClick={() => onLogIn({email, password})}> <h2>Войти</h2> </div>
             <h3>Ещё не зарегистрированы?</h3><Link to="/registration"><h3> Зарегистрироваться</h3></Link>
           
     </div>

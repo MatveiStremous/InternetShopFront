@@ -10,6 +10,8 @@ import ProductInfo from "./pages/ProductInfo";
 
 import AppContext from "./context";
 import Registration from "./pages/Registration";
+import Cart from "./pages/Cart";
+import DeliveryAndPayment from "./pages/DeliveryAndPayment";
 
 function App() {
   const [items, setItems] = React.useState([]);
@@ -32,22 +34,22 @@ function App() {
   React.useEffect(() => {
     async function fetchData() {
       try {
-         const cartResponse = await axios.get(
+       if(user.id){
+        const cartResponse = await axios.get(
           `http://localhost:8088/getCartItems/${16}`
-         );
-
-        const itemsResponse = await axios.get(
-          "http://localhost:8088/getProducts"
         );
-
-        // const help = cartResponse.data
-        //   .map((item) => (
-        //     {productId: item.productId, price: item.price, imageUrl: item.imageUrl, title: item.title}
-        //   ))
-
         setCartItems(cartResponse.data);
+        }
+        else{
+          const cartResponse = JSON.parse(localStorage.getItem('cartItems'));
+          setCartItems(cartResponse);
+        }
 
+         const itemsResponse = await axios.get(
+           "http://localhost:8088/getProducts"
+         );
         setItems(itemsResponse.data);
+        setUser(JSON.parse(localStorage.getItem('user')));
       } catch (error) {
         alert("Ошибка при запросе данных :(");
       }
@@ -55,42 +57,6 @@ function App() {
 
     fetchData();
   }, []);
-
-  // const onAddToCart = async (obj) => {
-  //   try {
-  //     const findItem = cartItems.find(
-  //       (item) => Number(item.parentId) === Number(obj.id)
-  //     );
-
-  //     if (findItem) {
-  //       setCartItems((prev) =>
-  //         prev.filter((item) => Number(item.parentId) !== Number(obj.id))
-  //       );
-  //       await axios.delete(
-  //         `https://6278f4add00bded55ae1b719.mockapi.io/cart/${findItem.id}`
-  //       );
-  //     } else {
-  //       setCartItems((prev) => [...prev, obj]);
-  //       const { data } = await axios.post(
-  //         "https://6278f4add00bded55ae1b719.mockapi.io/cart",
-  //         obj
-  //       );
-  //       setCartItems((prev) =>
-  //         prev.map((item) => {
-  //           if (item.parentId === data.parentId) {
-  //             return {
-  //               ...item,
-  //               id: data.id,
-  //             };
-  //           }
-  //           return item;
-  //         })
-  //       );
-  //     }
-  //   } catch (error) {
-  //     alert("Не удалось добавить товар в корзину");
-  //   }
-  // };
 
   const onAddItemToCart = async (obj) => {
     try {
@@ -102,11 +68,22 @@ function App() {
         setCartItems((prev) =>
           prev.filter((item) => Number(item.productId) !== Number(obj.productId))
         );
-        await axios.post("http://localhost:8088/deleteCartItem", {userId: 16, productId: obj.productId, quantity: 1});
+     if(user.id){
+          await axios.post("http://localhost:8088/deleteCartItem", {userId: 16, productId: obj.productId, quantity: obj.quantity});
+        }
+        else{
+          localStorage.setItem('cartItems', JSON.stringify(cartItems.filter((item) => Number(item.productId) !== Number(obj.productId))))
+        }
       } 
        else {
         setCartItems((prev) => [...prev, obj]);
-        await axios.post( "http://localhost:8088/addCartItem", {userId: 16, productId: obj.productId, quantity: 1});     
+        
+        if(user.id){
+        await axios.post( "http://localhost:8088/addCartItem", {userId: 16, productId: obj.productId, quantity: obj.quantity});
+        }
+        else{
+          localStorage.setItem('cartItems', JSON.stringify([...cartItems, obj]))
+        }     
      }
     } catch (error) {
      alert("Не удалось добавить товар в корзину");
@@ -115,12 +92,25 @@ function App() {
 
   const onRemoveFromCart = async (id) => {
     try {
-      await axios.post("http://localhost:8088/deleteCartItem", {userId: 16, productId: id, quantity: 1});
       setCartItems((prev) =>
         prev.filter((item) => Number(item.productId) !== Number(id)));
+     if (user.id){
+      await axios.post("http://localhost:8088/deleteCartItem", {userId: 16, productId: id, quantity: 1});
+      }
+      else{
+        localStorage.setItem('cartItems', JSON.stringify(cartItems.filter((item) => Number(item.productId) !== Number(id))))
+      }
     } catch (error) {
       alert("Не удалось удалить товар из корзины");
     }
+  };
+
+  const onUpdateQuantityInCart = async (obj) => {
+    try {
+      await axios.post("http://localhost:8088/updateQuantity", {userId: 16, productId: obj.productId, quantity: obj.quantity});
+    } catch (error) {
+     alert("Не удалось изменить количество товара в корзине");
+   }
   };
 
   const onDeleteProduct = async (id) => {
@@ -138,12 +128,11 @@ function App() {
   };
 
   const isItemAdded = (id) => {
-    console.log(id);
     return cartItems.some((obj) => Number(obj.productId) === Number(id));
   };
 
   return (
-    <AppContext.Provider value={{ items, setCartItems, cartItems, isItemAdded, user, setUser}}>
+    <AppContext.Provider value={{ items, setCartItems, cartItems, isItemAdded, user, setUser, onUpdateQuantityInCart}}>
       <div className="wrapper clear">
         {cartOpened && (
           <Drawer
@@ -152,7 +141,9 @@ function App() {
             onRemove={onRemoveFromCart}
           />
         )}
+
         <Header onClickCart={() => setCartOpened(true)} />
+
         <Routes>
           <Route
             path="/"
@@ -164,11 +155,25 @@ function App() {
                 searchValue={searchValue}
                 setSearchValue={setSearchValue}
                 onChangeSearchInput={onChangeSearchInput}
-                //onAddToCart={onAddToCart}
+                onAddToCart={onAddItemToCart}
               />
             }
           ></Route>
           
+          <Route
+            path="/cart"
+            exact
+            element={
+              <Cart
+              items={cartItems}
+              onClose={() => setCartOpened(false)}
+              onRemove={onRemoveFromCart}
+              />
+            }
+          ></Route>
+
+
+
           <Route
             path="/login"
             exact
@@ -188,7 +193,16 @@ function App() {
               />
             }
           ></Route>
-
+          
+          <Route
+            path="/info"
+            exact
+            element={
+              <DeliveryAndPayment
+              
+              />
+            }
+          ></Route>
 
           <Route
             path={`/products/:id`}
