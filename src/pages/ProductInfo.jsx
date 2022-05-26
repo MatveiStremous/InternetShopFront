@@ -4,10 +4,21 @@ import axios from "axios";
 import AppContext from "../context";
 
 
-function ProductInfo({onDelete, onAddItemToCart, productId, price, imageUrl}) {
+function ProductInfo({onDelete, onAddItemToCart}) {
     const params = useParams();
     const {user, isItemAdded} = React.useContext(AppContext);
     const isDeletePermited = user.role === "ADMIN_ROLE" || user.role === "MODERATOR_ROLE";
+    const [quantity, setQuantity] = React.useState(1);
+
+     const onPlus = (obj) => {
+       setQuantity(quantity+1);
+     };
+    const onMinus = (obj) => {
+      if(quantity>1){
+        setQuantity(quantity-1);
+      }
+    };
+
 
     React.useEffect(() => {
       async function fetchData() {
@@ -42,7 +53,7 @@ function ProductInfo({onDelete, onAddItemToCart, productId, price, imageUrl}) {
     });
 
     const onClickPlus = () => { 
-      onAddItemToCart({productId: product.id, price: product.price, imageUrl: product.imageUrl, title: product.title});
+      onAddItemToCart({productId: product.id, price: product.price, imageUrl: product.imageUrl, title: product.title, quantity: quantity});
     };
 
     return (
@@ -53,7 +64,26 @@ function ProductInfo({onDelete, onAddItemToCart, productId, price, imageUrl}) {
         <h4>Цена: {product.price} руб.</h4>
         <h4>Размеры: {product.size}</h4>
         <h4>Материалы: {product.materials}</h4>
+        {!isItemAdded(params.id) && <>
+          <img
+        height={50}
+        onClick={onMinus}
+        src="/img/minus-circle.png"
+        alt="minus"
+        />
+        <span>{quantity}</span>
         <img
+        height={50}
+        onClick={onPlus}
+        src="/img/plus-circle.png"
+        alt="plus"
+        />
+        </>}
+        <p></p>
+
+        <p></p>
+        <img
+          
           //className={styles.plus}
           onClick={onClickPlus}
           src={isItemAdded(params.id) ? "/img/btn-checked.svg" : "/img/btn-plus.svg"}
