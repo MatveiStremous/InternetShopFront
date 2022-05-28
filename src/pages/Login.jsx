@@ -1,10 +1,10 @@
 import React from "react";
 import axios from "axios";
-import { Link, useNavigate} from 'react-router-dom';
+import { Link, useNavigate } from "react-router-dom";
 import AppContext from "../context";
 
 function Login() {
-  const {user, setUser} = React.useContext(AppContext);
+  const { user, setUser, setCartItems } = React.useContext(AppContext);
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [message, setMessage] = React.useState("");
@@ -12,53 +12,87 @@ function Login() {
 
   const onLogIn = async (obj) => {
     try {
-        axios.post("http://localhost:8088/login", obj)
-        .then((res) => {
-            setMessage("Invalid login or password")
-            setUser(res.data);
-            localStorage.setItem('user',JSON.stringify(user));
-            setMessage("Вы успешно вошли");
-            Navigate("/");
+      axios.post("http://localhost:8088/login", obj).then(
+        (res) => {
+            if(res.data==="")
+            {
+                setMessage("Invalid login or password");
+            }
+            else{
+                setUser(res.data);
+                console.log("Всё гуд", res.data);
+                localStorage.setItem("user", JSON.stringify(res.data));
+                setMessage("Вы успешно вошли");
+                Navigate("/");
+            }
         },
-        ()=>{
-            setMessage("Invalid login or password")
-         }
-        )
-        
+        () => {
+          console.log("Норм распознало");
+          setMessage("Invalid login or password");
+        }
+      );
     } catch (error) {
       alert("Не удалось войти");
     }
   };
 
+  const onLogOut = () => {
+    setUser({ id: 0, email: "", name: "", role: "USER_ROLE", active: true });
+    setCartItems(JSON.parse(localStorage.getItem("cartItems")));
+    localStorage.setItem(
+      "user",
+      JSON.stringify({
+        id: 0,
+        email: "",
+        name: "",
+        role: "USER_ROLE",
+        active: true,
+      })
+    );
+  };
+
   return (
-
     <div className="content p-40">
-        <h1>{user.id} {user.email} {user.role}</h1>
-        <h1> Войдите в аккаунт</h1>
-        <div>
-
-             <input
-            required
-            onChange={(obj)=> setEmail(obj.target.value)}
-            value={email}
-            type="email"
-            placeholder="Ivanov@mail.ru"
-             />
+      <h1>
+        {user.id} {user.email} {user.role}
+      </h1>
+      {JSON.parse(localStorage.getItem("user")).id ? (
+        <h1 className="cu-p" onClick={onLogOut}>
+          Выйти
+        </h1>
+      ) : (
+        <>
+          <h1> Войдите в аккаунт</h1>
+          <div>
+            <input
+              required
+              onChange={(obj) => setEmail(obj.target.value)}
+              value={email}
+              type="email"
+              placeholder="Ivanov@mail.ru"
+            />
             <p></p>
-             <input
-            minLength={6}
-            required
-            onChange={(obj)=> setPassword(obj.target.value)}
-            value={password}
-            type="password"
-            placeholder="Your password"
-             />           
-        </div>
-            <p></p>
-            <h1>{message && message}</h1>
-            <div className="cu-p" onClick={() => onLogIn({email, password})}> <h2>Войти</h2> </div>
-            <h3>Ещё не зарегистрированы?</h3><Link to="/registration"><h3> Зарегистрироваться</h3></Link>
-          
+            <input
+              minLength={6}
+              required
+              onChange={(obj) => setPassword(obj.target.value)}
+              value={password}
+              type="password"
+              placeholder="Your password"
+            />
+          </div>
+          <p></p>
+          <h1>{message && message}</h1>
+          <div className="cu-p" onClick={() => onLogIn({ email, password })}>
+            {" "}
+            <h2>Войти</h2>{" "}
+          </div>
+          <h3>Ещё не зарегистрированы?</h3>
+          <Link to="/registration">
+            <h3> Зарегистрироваться</h3>
+          </Link>
+        </>
+      )}
     </div>
   );
 }

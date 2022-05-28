@@ -1,0 +1,26 @@
+.NavBlock{
+    display: flex;
+    align-content:center;
+    padding-left: 40px;
+    padding-right: 40px;
+    padding-top: 5px;
+    padding-bottom: 15px;
+    margin-bottom: 0;
+    border-bottom: 1px solid #BC8F8F;
+    justify-content: center;
+
+    li{
+        margin-left: 10px;
+        margin-right: 10px;
+        cursor: pointer;
+        
+        &:hover{
+            border-bottom: 2px solid black;
+        }
+    
+        
+    }
+
+   
+   
+}

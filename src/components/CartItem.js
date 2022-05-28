@@ -30,14 +30,14 @@ function CartItem({ productId, title, imageUrl, price, quantity, onRemove}) {
       <b>{price} руб.</b>
     </div>
     
-    <img
+    <img className="cu-p"
  height={50}
  onClick={onMinus}
  src="/img/minus-circle.png"
  alt="minus"
  />
  <span>{cartQuantity}</span>
- <img
+ <img className="cu-p"
  height={50}
  onClick={onPlus}
  src="/img/plus-circle.png"
