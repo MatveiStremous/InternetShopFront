@@ -15,7 +15,9 @@
         cursor: pointer;
         
         &:hover{
-            border-bottom: 2px solid black;
+            border-bottom: 2px solid;
+            //text-decoration: underline;
+          
         }
     
         

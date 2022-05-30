@@ -1,0 +1,28 @@
+ .content {
+ padding: 40px;
+// justify-content: center;
+
+ h2 {
+     font-weight: 500;
+     font-size: 35px;
+ }
+ 
+  }
+
+  .info {
+       display: flex;
+ justify-content: space-between;
+ align-items: center;
+
+  }
+
+  .image {
+      img {
+          width: 330px;
+          margin: 30px;
+      }
+      margin-left: 10px;
+    border-radius: 20px;
+    border: 2px solid;
+    border-color: #dfcfcf;
+}

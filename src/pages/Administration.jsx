@@ -8,6 +8,12 @@ function Administration() {
     async function fetchData() {
       try {
         const answer = await axios.get(`http://localhost:8088/getAllUsers`);
+        answer.data.sort(function (a, b) {
+          if (a.id > b.id) {
+            return 1;
+          }else {
+            return -1;
+          }});
         setUsers(answer.data);
       } catch (error) {}
     }
@@ -20,6 +26,7 @@ function Administration() {
         alert("Запрещено повышать до Администратора.");
       } else {
         await axios.post(`http://localhost:8088/upStatus/${obj.id}`);
+        window.location.reload();
       }
     } catch (error) {
       alert("Не удалось увеличить статус пользователю");
@@ -36,6 +43,7 @@ function Administration() {
           alert("Ниже некуда...");
         } else {
           await axios.post(`http://localhost:8088/downStatus/${obj.id}`);
+          window.location.reload();
         }
       }
     } catch (error) {

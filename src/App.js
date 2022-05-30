@@ -14,12 +14,15 @@ import Cart from "./pages/Cart";
 import DeliveryAndPayment from "./pages/DeliveryAndPayment";
 import Moderation from "./pages/Moderation";
 import Administration from "./pages/Administration";
+import Ordering from "./pages/Ordering";
 
 function App() {
   const [items, setItems] = React.useState([]);
   const [cartItems, setCartItems] = React.useState([]);
   const [searchValue, setSearchValue] = React.useState("");
   const [cartOpened, setCartOpened] = React.useState(false);
+  const [loginOpened, setLoginOpened] = React.useState(false);
+  const [regOpened, setRegOpened] = React.useState(false);
   const Navigate = useNavigate();
 
   const [user, setUser] = React.useState(() => {
@@ -41,14 +44,6 @@ function App() {
   }, []);
 
   React.useEffect(() => {
-    try {
-      const temp = JSON.parse(localStorage.getItem("cartItems"))[1];
-    } catch {
-      localStorage.setItem("cartItems", JSON.stringify(cartItems));
-    }
-  }, []);
-
-  React.useEffect(() => {
     async function fetchData() {
       try {
         setUser(JSON.parse(localStorage.getItem("user")));
@@ -59,7 +54,24 @@ function App() {
             const freshUserInfo = await axios.get(
               `http://localhost:8088/getFreshInfoAboutUser/${userId}`
             );
-            localStorage.setItem("user", JSON.stringify(freshUserInfo.data));
+            if (!freshUserInfo.data.active) {
+              console.log("Заблочен аккаунт")
+              alert(
+                "Ваш аккаунт заблокирован. Свяжитесь с администрацией, чтобы выяснить причину."
+              );
+              localStorage.setItem(
+                "user",
+                JSON.stringify({
+                  id: 0,
+                  email: "",
+                  name: "",
+                  role: "USER_ROLE",
+                  active: true,
+                })
+              );
+            } else {
+              localStorage.setItem("user", JSON.stringify(freshUserInfo.data));
+            }
           } catch {
             alert("Не удалось проверить ваш аккаунт");
           }
@@ -71,16 +83,12 @@ function App() {
               `http://localhost:8088/getCartItems/${userId}`
             );
             setCartItems(cartResponse.data);
-          } else {
-            const cartResponse = JSON.parse(localStorage.getItem("cartItems"));
-            setCartItems(cartResponse);
           }
 
           const itemsResponse = await axios.get(
             "http://localhost:8088/getProducts"
           );
           setItems(itemsResponse.data);
-          //setUser(JSON.parse(localStorage.getItem("user")));
         } catch (error) {
           alert("Ошибка при запросе данных :(");
         }
@@ -91,6 +99,7 @@ function App() {
 
   const onAddItemToCart = async (obj) => {
     console.log("From function onAddItemToCart", user);
+    if(user.id){
     try {
       const findItem = cartItems.find(
         (item) => Number(item.productId) === Number(obj.productId)
@@ -108,15 +117,6 @@ function App() {
             productId: obj.productId,
             quantity: obj.quantity,
           });
-        } else {
-          localStorage.setItem(
-            "cartItems",
-            JSON.stringify(
-              cartItems.filter(
-                (item) => Number(item.productId) !== Number(obj.productId)
-              )
-            )
-          );
         }
       } else {
         setCartItems((prev) => [...prev, obj]);
@@ -127,16 +127,15 @@ function App() {
             productId: obj.productId,
             quantity: obj.quantity,
           });
-        } else {
-          localStorage.setItem(
-            "cartItems",
-            JSON.stringify([...cartItems, obj])
-          );
         }
       }
     } catch (error) {
       alert("Не удалось добавить товар в корзину");
     }
+  }
+  else{
+    alert("Войдите в аккаунт, чтобы добавлять товары в корзину.")
+  }
   };
 
   const onRemoveFromCart = async (id) => {
@@ -151,13 +150,6 @@ function App() {
           productId: id,
           quantity: 1,
         });
-      } else {
-        localStorage.setItem(
-          "cartItems",
-          JSON.stringify(
-            cartItems.filter((item) => Number(item.productId) !== Number(id))
-          )
-        );
       }
     } catch (error) {
       alert("Не удалось удалить товар из корзины");
@@ -168,16 +160,16 @@ function App() {
     console.log("From function onUpdateQuantityInCart", user);
     try {
       setCartItems((prev) =>
-      prev.map((item) => {
-        if (item.productId === obj.productId) {
-          return {
-            ...item,
-            quantity: obj.quantity,
-          };
-        }
-        return item;
-      })
-    );
+        prev.map((item) => {
+          if (item.productId === obj.productId) {
+            return {
+              ...item,
+              quantity: obj.quantity,
+            };
+          }
+          return item;
+        })
+      );
 
       if (user.id) {
         await axios.post("http://localhost:8088/updateQuantity", {
@@ -185,21 +177,6 @@ function App() {
           productId: obj.productId,
           quantity: obj.quantity,
         });
-      } else {
-        localStorage.setItem(
-          "cartItems",
-          JSON.stringify(
-            cartItems.map((item) => {
-              if (item.productId === obj.productId) {
-                return {
-                  ...item,
-                  quantity: obj.quantity,
-                };
-              }
-              return item;
-            })
-          )
-        );
       }
     } catch (error) {
       alert("Не удалось изменить количество товара в корзине");
@@ -231,6 +208,14 @@ function App() {
 
   const isItemAdded = (id) => {
     return cartItems.some((obj) => Number(obj.productId) === Number(id));
+  };
+
+  const onFormNewOrder = async (obj) => {
+    try {
+      await axios.post(`http://localhost:8088/formNewOrder`, obj);
+    } catch (error) {
+      alert("Не удалось сформировать заказ");
+    }
   };
 
   return (
@@ -277,8 +262,6 @@ function App() {
             exact
             element={
               <Cart
-                items={cartItems}
-                onClose={() => setCartOpened(false)}
                 onRemove={onRemoveFromCart}
               />
             }
@@ -308,7 +291,17 @@ function App() {
             element={<Moderation onAddNewProduct={onAddProduct} />}
           ></Route>
 
-          <Route path="/administration" exact element={<Administration />}></Route>
+          <Route
+            path="/ordering"
+            exact
+            element={<Ordering onFormNewOrder={onFormNewOrder} />}
+          ></Route>
+
+          <Route
+            path="/administration"
+            exact
+            element={<Administration />}
+          ></Route>
         </Routes>
       </div>
     </AppContext.Provider>

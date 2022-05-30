@@ -42,45 +42,45 @@ function Registration() {
 
   return (
     <div className="content p-40">
-      <div>
-        <input
-          required
-          onChange={(obj) => setName(obj.target.value)}
-          value={newUser.name}
-          placeholder="Иван"
-        />
+      <form onSubmit={() => onRegistration(newUser)}>
+        <div>
+          <input
+            required
+            onChange={(obj) => setName(obj.target.value)}
+            value={newUser.name}
+            placeholder="Иван"
+          />
+          <p></p>
+          <input
+            required
+            onChange={(obj) => setEmail(obj.target.value)}
+            value={newUser.email}
+            type="email"
+            placeholder="Ivanov@mail.ru"
+          />
+          <p></p>
+          <input
+            minLength={6}
+            required
+            onChange={(obj) => setPassword(obj.target.value)}
+            value={newUser.password}
+            type="password"
+            placeholder="Your password"
+          />
+          <p></p>
+          <input
+            minLength={6}
+            required
+            onChange={(obj) => setPassword2(obj.target.value)}
+            value={password2}
+            type="password"
+            placeholder="Enter your password one more time"
+          />
+        </div>
         <p></p>
-        <input
-          required
-          onChange={(obj) => setEmail(obj.target.value)}
-          value={newUser.email}
-          type="email"
-          placeholder="Ivanov@mail.ru"
-        />
-        <p></p>
-        <input
-          minLength={6}
-          required
-          onChange={(obj) => setPassword(obj.target.value)}
-          value={newUser.password}
-          type="password"
-          placeholder="Your password"
-        />
-        <p></p>
-        <input
-          minLength={6}
-          required
-          onChange={(obj) => setPassword2(obj.target.value)}
-          value={password2}
-          type="password"
-          placeholder="Enter your password one more time"
-        />
-      </div>
-      <p></p>
-      <h1>{message && `${message}`}</h1>
-      <div className="cu-p" onClick={() => onRegistration(newUser)}>
-        <h3>Зарегистрироваться</h3>
-      </div>
+        <input type="submit" value="Зарегистрироваться"/>
+        <h3>{message && `${message}`}</h3>
+      </form>
     </div>
   );
 }

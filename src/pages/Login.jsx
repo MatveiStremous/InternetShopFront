@@ -19,15 +19,21 @@ function Login() {
                 setMessage("Invalid login or password");
             }
             else{
-                setUser(res.data);
-                console.log("Всё гуд", res.data);
-                localStorage.setItem("user", JSON.stringify(res.data));
-                setMessage("Вы успешно вошли");
-                Navigate("/");
+                if(!res.data.active){
+                  setMessage("Ваша учётная запись заблокирована. Чтобы узнать причину, свяжитесь с администратором.")
+                  onLogOut();
+                }
+                else{
+                  setUser(res.data);
+                  console.log("Всё гуд", res.data);
+                  localStorage.setItem("user", JSON.stringify(res.data));
+                  setMessage("Вы успешно вошли");
+                  Navigate("/");
+                }
             }
         },
         () => {
-          console.log("Норм распознало");
+          console.log("Норм распознало ошибку");
           setMessage("Invalid login or password");
         }
       );
@@ -38,7 +44,7 @@ function Login() {
 
   const onLogOut = () => {
     setUser({ id: 0, email: "", name: "", role: "USER_ROLE", active: true });
-    setCartItems(JSON.parse(localStorage.getItem("cartItems")));
+    //setCartItems(JSON.parse(localStorage.getItem("cartItems")));
     localStorage.setItem(
       "user",
       JSON.stringify({
@@ -62,6 +68,7 @@ function Login() {
         </h1>
       ) : (
         <>
+        <form onSubmit={() => onLogIn({ email, password })}>
           <h1> Войдите в аккаунт</h1>
           <div>
             <input
@@ -82,16 +89,14 @@ function Login() {
             />
           </div>
           <p></p>
+          <input type="submit" value="Войти"/>
           <h1>{message && message}</h1>
-          <div className="cu-p" onClick={() => onLogIn({ email, password })}>
-            {" "}
-            <h2>Войти</h2>{" "}
-          </div>
-          <h3>Ещё не зарегистрированы?</h3>
-          <Link to="/registration">
-            <h3> Зарегистрироваться</h3>
-          </Link>
-        </>
+        </form>
+        <h5>Ещё не зарегистрированы?</h5>
+         <Link to="/registration">
+         <h3> Зарегистрироваться</h3>
+       </Link>
+       </>
       )}
     </div>
   );
