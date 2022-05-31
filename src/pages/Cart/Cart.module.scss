@@ -1,0 +1,90 @@
+.cart{
+    padding: 50px;
+    padding-top: 10px;
+    h2{
+        font-size: 22px;
+    }
+}
+.content{
+    display: flex;
+    justify-content: space-between;
+}
+.cartTotalBlock {
+    width: 300px;
+    .total {
+        display: block;
+        margin-bottom: 20px !important;
+        display: flex;
+        align-items: flex-end;
+
+
+        h4{
+            margin: 0;
+        }
+        div {
+            flex: 1;
+            height: 1px;
+            border-bottom: 1px dashed #dfdfdf;
+            position: relative;
+            top: -4px;
+            margin: 0 7px;
+        }
+    }
+}
+
+.greenButton {
+    margin-top: 20px;
+    width: 300px;
+    height: 55px;
+    background: #9DD558;
+    border-radius: 18px;
+    border: 0;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+
+    transition: background 0.1s ease-in-out;
+
+    &:hover {
+        background: lighten(#9DD558, 5%)
+    }
+
+    &:active {
+        background: darken(#9DD558, 5%)
+    }
+}
+
+.inputFields{
+    h4{
+      margin-bottom: 0;
+      margin-top: 0;
+      font-weight: 500;
+    }
+    input{
+      margin-top: 10px;
+      margin-bottom: 10px;
+      border: 1px solid rgb(167, 164, 164);
+      background-color: white;
+      border-radius: 5px;
+      height: 30px;
+      font-size: 18px;
+      width: 300px;
+      padding-left: 10px;
+    }
+  }
+
+  .emptyCart{
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+      img{
+          width: 200px;
+          margin-top: 30px;
+      }
+      h4{
+          font-size: 18px;
+          margin-bottom: 0;
+      }
+  }

@@ -1,5 +1,6 @@
 import React from "react";
-import Card from "../components/Card";
+import Card from "../../components/Card";
+import st from "./Home.module.scss"
 
 function Home({
   items,
@@ -10,12 +11,12 @@ function Home({
 }) {
 
   return (
-    <div className="content p-40">
+    <div className={st.content}>
       <div className="d-flex align-center mb-40 justify-between">
         <h1>
           {searchValue ? `Поиск по запросу: "${searchValue}"` : "Все товары"}
         </h1>
-        <div className="search-block">
+        <div className={st.searchBlock}>
           <img width={20} height={20} src="/img/search.png" alt="Search" />
           {searchValue && (
             <img

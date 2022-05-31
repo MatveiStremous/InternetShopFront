@@ -1,6 +1,6 @@
 import React from "react";
 import AppContext from "../../context";
-import styles from "./CartItem.module.scss"
+import st from "./CartItem.module.scss";
 
 function CartItem({ productId, title, imageUrl, price, quantity, onRemove }) {
   const [cartQuantity, setCartQuantity] = React.useState(quantity);
@@ -11,7 +11,6 @@ function CartItem({ productId, title, imageUrl, price, quantity, onRemove }) {
     onUpdateQuantityInCart({
       productId: productId,
       quantity: cartQuantity + 1,
-      
     });
   };
   const onMinus = () => {
@@ -25,43 +24,37 @@ function CartItem({ productId, title, imageUrl, price, quantity, onRemove }) {
   };
 
   return (
-    <div key={productId} className="cartItem d-flex align-center mb-20">
-      <img
-        className="mr-20"
-        width={70}
-        height={70}
-        src={imageUrl}
-        alt="Product"
-      />
-      <div className="mr-20">
-        <p className="mb-5">{title}</p>
-        <b>{price} руб.</b>
+    <div key={productId} className={st.cartItem}>
+      <div className={st.leftBlock}>
+        <img src={imageUrl} alt="Product" />
+        <div className={st.info}>
+          <p>{title}</p>
+          <b>{price} BYN</b>
+        </div>
       </div>
+      <div className={st.rightBlock}>
+        <div className={st.counter}>
+          <div onClick={onMinus} className={st.quantity1}>
+            <img src="/img/minus-number.png" alt="minus" />
+          </div>
+          <div className={st.number}>
+            <span>{cartQuantity}</span>
+          </div>
 
-      <img
-        className="cu-p"
-        height={50}
-        onClick={onMinus}
-        src="/img/minus-circle.png"
-        alt="minus"
-      />
-      <span>{cartQuantity}</span>
-      <img
-        className="cu-p"
-        height={50}
-        onClick={onPlus}
-        src="/img/plus-circle.png"
-        alt="plus"
-      />
+          <div onClick={onPlus} className={st.quantity2}>
+            <img onClick={onPlus} src="/img/plus-number.png" alt="plus" />
+          </div>
+        </div>
 
-      <img
-        onClick={() => {
-          onRemove(productId);
-        }}
-        className="removeBtn"
-        src="/img/btn-remove.svg"
-        alt="Remove"
-      />
+        <img
+          onClick={() => {
+            onRemove(productId);
+          }}
+          className={st.removeBtn}
+          src="/img/btn-remove.svg"
+          alt="Remove"
+        />
+      </div>
     </div>
   );
 }

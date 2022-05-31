@@ -3,24 +3,23 @@ import { Route, Routes, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import Header from "./components/Header";
-import Drawer from "./components/Drawer";
+
 import Home from "./pages/Home";
-import Login from "./pages/Login";
 import ProductInfo from "./pages/ProductInfo";
 
 import AppContext from "./context";
-import Registration from "./pages/Registration";
 import Cart from "./pages/Cart";
 import DeliveryAndPayment from "./pages/DeliveryAndPayment";
 import Moderation from "./pages/Moderation";
 import Administration from "./pages/Administration";
 import Ordering from "./pages/Ordering";
+import Login from "./components/Login";
+import Registration from "./components/Registration";
 
 function App() {
   const [items, setItems] = React.useState([]);
   const [cartItems, setCartItems] = React.useState([]);
   const [searchValue, setSearchValue] = React.useState("");
-  const [cartOpened, setCartOpened] = React.useState(false);
   const [loginOpened, setLoginOpened] = React.useState(false);
   const [regOpened, setRegOpened] = React.useState(false);
   const Navigate = useNavigate();
@@ -55,7 +54,6 @@ function App() {
               `http://localhost:8088/getFreshInfoAboutUser/${userId}`
             );
             if (!freshUserInfo.data.active) {
-              console.log("Заблочен аккаунт")
               alert(
                 "Ваш аккаунт заблокирован. Свяжитесь с администрацией, чтобы выяснить причину."
               );
@@ -231,15 +229,20 @@ function App() {
       }}
     >
       <div className="wrapper clear">
-        {cartOpened && (
-          <Drawer
-            items={cartItems}
-            onClose={() => setCartOpened(false)}
-            onRemove={onRemoveFromCart}
+         {loginOpened && (
+          <Login
+            onClose={() => setLoginOpened(false)}
+            onRegistration={()=>{setLoginOpened(false); setRegOpened(true)}}
+          />
+        )}
+          {regOpened && (
+          <Registration
+            onClose={() => setRegOpened(false)}
+            goToLogin={()=>{setRegOpened(false); setLoginOpened(true)}}
           />
         )}
 
-        <Header onClickCart={() => setCartOpened(true)} />
+        <Header onClickLogin={()=>setLoginOpened(true)} />
 
         <Routes>
           <Route
@@ -263,13 +266,10 @@ function App() {
             element={
               <Cart
                 onRemove={onRemoveFromCart}
+                onFormNewOrder={onFormNewOrder}
               />
             }
           ></Route>
-
-          <Route path="/login" exact element={<Login />}></Route>
-
-          <Route path="/registration" exact element={<Registration />}></Route>
 
           <Route path="/info" exact element={<DeliveryAndPayment />}></Route>
 

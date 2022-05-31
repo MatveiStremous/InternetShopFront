@@ -69,54 +69,56 @@ function ProductInfo({ onDelete, onAddItemToCart }) {
     <div className={st.content}>
       <h2>{product.title}</h2>
       <div className={st.info}>
-      <div className={st.image}>
-        <img src={product.imageUrl} alt="Product" />
-      </div>
-      <div>
-        <h4>Описание: {product.description}</h4>
-        <h4>Цена: {product.price} руб.</h4>
-        <h4>Размеры: {product.size}</h4>
-        <h4>Материалы: {product.materials}</h4>
-        {!isItemAdded(params.id) && (
-          <>
-            <img
-              height={50}
-              onClick={onMinus}
-              src="/img/minus-circle.png"
-              alt="minus"
-            />
-            <span>{quantity}</span>
-            <img
-              height={50}
-              onClick={onPlus}
-              src="/img/plus-circle.png"
-              alt="plus"
-            />
-          </>
-        )}
-        <p></p>
+        <div className={st.image}>
+          <img src={product.imageUrl} alt="Product" />
+        </div>
+        <div>
+          <div className={st.price}>
+            <h5>{product.price} BYN</h5>
+          </div>
+          <div className="d-flex">
+            {!isItemAdded(params.id) && (
+              <div className={st.counter}>
+                <div onClick={onMinus} className={st.quantity1}>
+                  <img src="/img/minus-number.png" alt="minus" />
+                </div>
+                <div className={st.number}>
+                  <span>{quantity}</span>
+                </div>
 
-        <p></p>
-        <img
-          //className={styles.plus}
-          onClick={onClickPlus}
-          src={
-            isItemAdded(params.id)
-              ? "/img/btn-checked.svg"
-              : "/img/btn-plus.svg"
-          }
-          //src="/img/btn-plus.svg"
-          alt="Add"
-        />
-        {isDeletePermited && (
-          <img
-            onClick={() => onDelete(product.id)}
-            className="removeBtn"
-            src="/img/btn-remove.svg"
-            alt="Remove"
-          />
-        )}
-      </div>
+                <div onClick={onPlus} className={st.quantity2}>
+                  <img onClick={onPlus} src="/img/plus-number.png" alt="plus" />
+                </div>
+              </div>
+            )}
+
+            <div className={st.button}>
+              <button onClick={onClickPlus}>
+                <p>{isItemAdded(params.id) ? "Удалить" : "В корзину"}</p>
+              </button>
+            </div>
+            {isDeletePermited && (
+              <div className={st.button}>
+                <button onClick={() => onDelete(product.id)}>
+                  <p>Удалить товар</p>
+                </button>
+              </div>
+            )}
+          </div>
+
+          <div className={st.description}>
+            <h4>Описание:</h4>
+            <h5>{product.description}</h5>
+          </div>
+          <div className={st.description}>
+            <h4>Материалы:</h4>
+            <h5>{product.materials}</h5>
+          </div>
+          <div className={st.description}>
+            <h4>Размеры:</h4>
+            <h5>{product.size}</h5>
+          </div>
+        </div>
       </div>
     </div>
   );

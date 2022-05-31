@@ -23,20 +23,19 @@ function Header(props) {
             </div>
           </div>
         </Link>
-        <ul className="d-flex">
-          <li onClick={props.onClickCart} className="mr-30 cu-p">
-            <img width={27} height={27} src="/img/cart.png" alt="Cart" />
-            <span>{totalPrice} руб.</span>
-          </li>
+        <div className={styles.rightBlock}>
+         
+            <div> <Link to={"/cart"}>
+              <img width={27} height={27} src="/img/cart.png" alt="Cart" />
+            </Link></div>
+          
           <Link to={"/cart"}>
-            <li>Cart</li>
-          </Link>
-          <Link to="/login">
-            <li className="cu-p">
-              <img width={27} height={27} src="/img/user.png" alt="User" />
-            </li>
-          </Link>
-        </ul>
+            <span>{totalPrice} руб.</span>
+       </Link>
+          <div onClick={props.onClickLogin}>   
+            <img width={27} height={27} src="/img/user.png" alt="User" />
+          </div>
+        </div>
       </header>
       <NavBlock />
     </>

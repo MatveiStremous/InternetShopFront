@@ -15,7 +15,7 @@ function Card({ productId, title, imageUrl, price, onPlus }) {
   return (
     <div className={styles.card}>
       <Link to={`/products/${productId}`}>
-        <img width={133} height={112} src={imageUrl} alt="Product" />
+        <img className={styles.image} width={133} height={112} src={imageUrl} alt="Product" />
         <h5>{title}</h5>
       </Link>
       <div className="d-flex justify-between align-center">
