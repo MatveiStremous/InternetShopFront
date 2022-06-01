@@ -24,16 +24,18 @@ function Header(props) {
           </div>
         </Link>
         <div className={styles.rightBlock}>
-         
-            <div> <Link to={"/cart"}>
+          <div>
+            {" "}
+            <Link to={"/cart"}>
               <img width={27} height={27} src="/img/cart.png" alt="Cart" />
-            </Link></div>
-          
+            </Link>
+          </div>
+
           <Link to={"/cart"}>
-            <span>{totalPrice} руб.</span>
-       </Link>
-          <div onClick={props.onClickLogin}>   
-            <img width={27} height={27} src="/img/user.png" alt="User" />
+            <div className={styles.totalPrice}>{totalPrice} BYN</div>
+          </Link>
+          <div  onClick={props.onClickLogin}>
+            <img className="cu-p" width={27} height={27} src="/img/user.png" alt="User" />
           </div>
         </div>
       </header>

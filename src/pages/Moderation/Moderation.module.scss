@@ -1,0 +1,42 @@
+.head{
+    padding: 40px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+
+    h2{
+    margin: 0;
+    margin-top: 10px;
+    display: block;
+    align-items: center;
+    }
+}
+
+.content{
+    margin: 40px;
+    margin-top: 0px;
+}
+
+.greenButton {
+    width: 300px;
+    height: 55px;
+    background: #9DD558;
+    border-radius: 18px;
+    border: 0;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    
+    cursor: pointer;
+
+    transition: background 0.1s ease-in-out;
+
+    &:hover {
+        background: lighten(#9DD558, 5%)
+    }
+
+    &:active {
+        background: darken(#9DD558, 5%)
+    }
+}

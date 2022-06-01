@@ -20,6 +20,10 @@ function NavBlock() {
         <NavLink to="/about">
           <li>О нас</li>
         </NavLink>
+        
+        <NavLink to="/myorders">
+        {user.id!==0 && <li> Мои заказы </li>}
+        </NavLink>
         <NavLink to="/moderation">{isModerationPermited && <li>Модерирование</li>}</NavLink>
         <NavLink to="/administration">{user.role === "ADMIN_ROLE" && <li>Администрирование</li>}</NavLink>
       </ul>

@@ -10,11 +10,12 @@ import ProductInfo from "./pages/ProductInfo";
 import AppContext from "./context";
 import Cart from "./pages/Cart";
 import DeliveryAndPayment from "./pages/DeliveryAndPayment";
+import About from "./pages/About";
 import Moderation from "./pages/Moderation";
 import Administration from "./pages/Administration";
-import Ordering from "./pages/Ordering";
 import Login from "./components/Login";
 import Registration from "./components/Registration";
+import MyOrders from "./pages/MyOrders"
 
 function App() {
   const [items, setItems] = React.useState([]);
@@ -272,6 +273,8 @@ function App() {
           ></Route>
 
           <Route path="/info" exact element={<DeliveryAndPayment />}></Route>
+          <Route path="/about" exact element={<About />}></Route>
+          <Route path="/myorders" exact element={<MyOrders />}></Route>
 
           <Route
             path={`/products/:id`}
@@ -289,12 +292,6 @@ function App() {
             path="/moderation"
             exact
             element={<Moderation onAddNewProduct={onAddProduct} />}
-          ></Route>
-
-          <Route
-            path="/ordering"
-            exact
-            element={<Ordering onFormNewOrder={onFormNewOrder} />}
           ></Route>
 
           <Route

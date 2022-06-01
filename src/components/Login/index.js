@@ -14,9 +14,6 @@ function Login({ onClose, onRegistration }) {
     try {
       axios.post("http://localhost:8088/login", obj).then(
         (res) => {
-          if (res.data === "") {
-            setMessage("Неверно введён логин или пароль.");
-          } else {
             if (!res.data.active) {
               setMessage(
                 "Ваша учётная запись заблокирована. Свяжитесь с администратором, чтобы узнать причину."
@@ -28,11 +25,9 @@ function Login({ onClose, onRegistration }) {
               onClose();
               window.location.reload();
             }
-          }
         },
-        () => {
-          console.log("Норм распознало ошибку");
-          setMessage("Invalid login or password");
+        (error) => {
+          setMessage(error.response.data.message);
         }
       );
     } catch (error) {

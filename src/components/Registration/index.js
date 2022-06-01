@@ -26,6 +26,7 @@ function Registration({ onClose, goToLogin }) {
         );
 
         if (answer.data) {
+          alert("На вашу почту отправлено письмо для подтверждения регистрации.")
           goToLogin();
         } else {
           setMessage("Данный email занят!");

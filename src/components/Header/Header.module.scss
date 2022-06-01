@@ -13,9 +13,13 @@
       margin: 0;
       font-size: 24px;
     }
+    
   }
 
   .rightBlock {
     display: flex;
     align-items:center;
+    .totalPrice{
+      margin-right: 15px;
+    }
   }
